@@ -38,7 +38,7 @@ Clienti che hanno effettuato più ordini
 '''
 def topClientiOrdini():
 
-    return spark.sql("SELECT user_id, COUNT(*) FROM Orders GROUP BY user_id").rdd
+    return spark.sql("SELECT user_id, COUNT(*) AS n FROM Orders GROUP BY user_id ORDER BY n DESC").rdd
 
 '''
 Prodotti più acquistati
@@ -47,9 +47,10 @@ Prodotti più acquistati
 '''
 def topProdottiComprati():
 
-    return spark.sql("SELECT product_name, COUNT(*) "
+    return spark.sql("SELECT product_name, COUNT(*) AS n "
               "FROM OrderUnified INNER JOIN Products ON OrderUnified.product_id = Products.product_id "
-              "GROUP BY product_name").rdd
+              "GROUP BY product_name "
+              "ORDER BY n DESC ").rdd
 
 
 '''
@@ -59,7 +60,7 @@ Restituisce gli ordini con più prodotti
 '''
 def ordiniPiuProdotti():
 
-     return spark.sql("SELECT order_id, COUNT(*) FROM OrderUnified GROUP BY order_id")
+     return spark.sql("SELECT order_id, COUNT(*) AS n FROM OrderUnified GROUP BY order_id ORDER BY n DESC")
 
 '''
 Restituisce il corridoio che ha venduto più prodotti
@@ -70,7 +71,7 @@ def corridoioBestSeller():
 
     dfIdAisle_Quantita = spark.sql("SELECT Products.aisle_id, COUNT(*) AS quantita "
               "FROM Products INNER JOIN OrderUnified ON OrderUnified.product_id = Products.product_id "
-              "GROUP BY Products.aisle_id")
+              "GROUP BY Products.aisle_id ORDER BY quantita DESC")
 
     dfIdAisle_Quantita.createOrReplaceTempView("Aisle_Quantita")
 
@@ -84,9 +85,9 @@ Ritorna l'ora in cui si vende di più
 '''
 def oraBestSeller():
 
-   return spark.sql("SELECT order_hour_of_day, COUNT(*) "
+   return spark.sql("SELECT order_hour_of_day, COUNT(*) AS n " 
              "FROM Orders "
-             "GROUP BY order_hour_of_day").rdd
+             "GROUP BY order_hour_of_day ORDER BY n DESC").rdd
 
 '''
 Ritorna il giorno in cui si vende di più
@@ -95,9 +96,9 @@ Ritorna il giorno in cui si vende di più
 '''
 def giornoBestSeller():
 
-   return spark.sql("SELECT order_dow, COUNT(*) "
+   return spark.sql("SELECT order_dow, COUNT(*) AS n "
               "FROM Orders "
-              "GROUP BY order_dow ORDER BY order_dow").rdd
+              "GROUP BY order_dow ORDER BY order_dow ORDER BY n DESC").rdd
 
 '''
 Ritorna l'utente che ha comprato di più per ogni giorno e per ogni ora
@@ -106,9 +107,9 @@ Ritorna l'utente che ha comprato di più per ogni giorno e per ogni ora
 '''
 def topOraGiornoAcquistoUtente():
 
-    return spark.sql("SELECT user_id, order_dow, order_hour_of_day, COUNT(*) "
+    return spark.sql("SELECT user_id, order_dow, order_hour_of_day, COUNT(*) AS n "
               "FROM Orders "
-              "GROUP BY user_id, order_dow, order_hour_of_day").rdd
+              "GROUP BY user_id, order_dow, order_hour_of_day ORDER BY n DESC").rdd
 
 '''
 Ritorna i prodotti che sono stati più riordinati per ogni giorno della settimana
@@ -118,9 +119,9 @@ Ritorna i prodotti che sono stati più riordinati per ogni giorno della settiman
 #
 def topProdottiRiordinatiPerGiorno():
 
-    return spark.sql("SELECT OrderUnified.product_id, Orders.order_dow, COUNT(*) "
+    return spark.sql("SELECT OrderUnified.product_id, Orders.order_dow, COUNT(*) AS n "
              "FROM Orders INNER JOIN OrderUnified ON Orders.order_id = OrderUnified.order_id "
-             "GROUP BY OrderUnified.product_id, Orders.order_dow").rdd
+             "GROUP BY OrderUnified.product_id, Orders.order_dow ORDER BY n DESC").rdd
 
 
 '''
@@ -212,10 +213,10 @@ Restituisce tutti gli ordini di un utente specifico
 '''
 def ordiniUtente(id_utente):
 
-    spark.sql("SELECT user_id, COUNT(*) "
+    spark.sql("SELECT user_id, COUNT(*) AS n "
               "FROM Orders "
               "WHERE user_id = %a "
-              "GROUP BY user_id" % id_utente)
+              "GROUP BY user_id ORDER BY n DESC" % id_utente)
 
 '''
 Restituisce tutti gli ordini di uno specifico utente in uno specifico giorno
@@ -226,10 +227,10 @@ Restituisce tutti gli ordini di uno specifico utente in uno specifico giorno
 '''
 def ordiniUtenteGiorno(id_utente, giorno):
 
-    spark.sql("SELECT user_id, COUNT(*) "
+    spark.sql("SELECT user_id, COUNT(*) AS n "
         "FROM Orders "
         "WHERE user_id = {} AND order_dow = {} "
-        "GROUP BY user_id".format(id_utente, giorno))
+        "GROUP BY user_id ORDER BY n DESC".format(id_utente, giorno))
 
 
 '''
@@ -241,10 +242,10 @@ Restituisce tutti gli ordini di uno specifico utente in una specifica ora
 '''
 def ordiniUtenteOra(id_utente, ora):
 
-    spark.sql("SELECT user_id, COUNT(*) "
+    spark.sql("SELECT user_id, COUNT(*) AS n "
         "FROM Orders "
         "WHERE user_id = {} AND order_hour_of_day = {} "
-        "GROUP BY user_id ".format(id_utente, ora))
+        "GROUP BY user_id ORDER BY n DESC".format(id_utente, ora))
 
 
 '''
@@ -284,7 +285,7 @@ Ritorna il numero di volte che il prodotto specifico è stato acquistato
 '''
 def prodottoAcquistato(id_product):
 
-    spark.sql("SELECT Products.product_name, COUNT(*) "
+    spark.sql("SELECT Products.product_name, COUNT(*) AS n "
               "FROM Products INNER JOIN OrderUnified ON OrderUnified.product_id = Products.product_id "
               "WHERE Products.product_id = %a "
               "GROUP BY Products.product_name" % id_product)
