@@ -37,6 +37,8 @@ def topClientiOrdini():
 
     return spark.sql("SELECT user_id, COUNT(*) FROM Orders GROUP BY user_id").rdd
 
+
+
 #ritorna le coppie (product_name, quantità comprata di product)
 def topProdottiComprati():
 
@@ -53,17 +55,15 @@ def ordiniPiuProdotti():
 #ritorna le coppie (aisle, numero di prodotti di aisle venduti)
 def corridoioBestSeller():
 
-    start = time.time()
     dfIdAisle_Quantita = spark.sql("SELECT Products.aisle_id, COUNT(*) AS quantita "
               "FROM Products INNER JOIN OrderUnified ON OrderUnified.product_id = Products.product_id "
               "GROUP BY Products.aisle_id")
 
     dfIdAisle_Quantita.createOrReplaceTempView("Aisle_Quantita")
 
-    spark.sql("SELECT Aisles.aisle, Aisle_Quantita.quantita "
-              "FROM Aisle_Quantita INNER JOIN Aisles ON Aisle_Quantita.aisle_id = Aisles.aisle_id").show()
-    end = time.time()
-    print(end-start)
+    return spark.sql("SELECT Aisles.aisle, Aisle_Quantita.quantita "
+              "FROM Aisle_Quantita INNER JOIN Aisles ON Aisle_Quantita.aisle_id = Aisles.aisle_id").rdd
+
 
 #ritorna le coppie (order_hour_of_day, numero di ordini order_hour_of_day)
 def oraBestSeller():
@@ -255,5 +255,3 @@ def numeroOrdine(user_id, order_id):
     spark.sql("SELECT order_number "
               "FROM Orders "
               "WHERE order_id = {} AND user_id =  {}".format(order_id, user_id)).show()
-
-corridoioBestSeller()
