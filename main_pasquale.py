@@ -13,7 +13,7 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 spark = SparkSession.builder.appName("Main").config("spark.driver.memory", "15g").getOrCreate()
 
 #creazione DataFrame
-dfOrders = spark.read.option("header", True).csv("orders.csv")
+dfOrdersDB = spark.read.option("header", True).csv("orders.csv")
 dfOrderProductsPrior = spark.read.option("header", True).csv("order_products__prior.csv")
 dfOrderProductsTrain = spark.read.option("header", True).csv("order_products__train.csv")
 dfAisles = spark.read.option("header", True).csv("aisles.csv")
@@ -21,15 +21,30 @@ dfDepartments = spark.read.option("header", True).csv("departments.csv")
 dfProducts = spark.read.option("header", True).csv("products.csv")
 
 #creazione view
-dfOrders.createOrReplaceTempView("Orders")
 dfOrderProductsPrior.createOrReplaceTempView("OrderProductsPrior")
 dfOrderProductsTrain.createOrReplaceTempView("OrderProductsTrain")
 dfAisles.createOrReplaceTempView("Aisles")
 dfDepartments.createOrReplaceTempView("Departments")
 dfProducts.createOrReplaceTempView("Products")
 
+
+#preprocessing
+'''
+Controlla se esistono prodotti in OrderUnified che non esistono in Products (dovuti magari ad errori di battitura)
+'''
+def preProcessingControlloProdotti():
+
+    return spark.sql("SELECT OrderUnified.product_id "
+                   "FROM OrderUnified "
+                   "WHERE OrderUnified.product_id NOT IN ( SELECT Products.product_id FROM Products)")
+
+
 dfOrderUnified = spark.sql("SELECT * FROM OrderProductsPrior UNION ALL SELECT * FROM OrderProductsTrain")
 dfOrderUnified.createOrReplaceTempView("OrderUnified")
+
+dfOrdersDB.createOrReplaceTempView("OrdersDB")
+dfOrders = spark.sql("SELECT * FROM OrdersDB WHERE eval_set != 'test'")
+dfOrders.createOrReplaceTempView("Orders")
 
 '''
 Clienti che hanno effettuato più ordini
