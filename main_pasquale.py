@@ -60,14 +60,14 @@ Restituisce gli ordini con più prodotti
 '''
 def ordiniPiuProdotti():
 
-     return spark.sql("SELECT order_id, COUNT(*) AS n FROM OrderUnified GROUP BY order_id ORDER BY n DESC")
+     return spark.sql("SELECT order_id, COUNT(*) AS n FROM OrderUnified GROUP BY order_id ORDER BY n DESC").rdd
 
 '''
 Restituisce il corridoio che ha venduto più prodotti
 :return aisle, numero di prodotti di aisle venduti
 # *** MEDIUM LOADING ***
 '''
-def corridoioBestSeller():
+def venditePerCorridoio():
 
     dfIdAisle_Quantita = spark.sql("SELECT Products.aisle_id, COUNT(*) AS quantita "
               "FROM Products INNER JOIN OrderUnified ON OrderUnified.product_id = Products.product_id "
@@ -83,22 +83,22 @@ Ritorna l'ora in cui si vende di più
 :return order_hour_of_day, numero di ordini order_hour_of_day
 *** FAST LOADING ***
 '''
-def oraBestSeller():
+def venditePerOra():
 
    return spark.sql("SELECT order_hour_of_day, COUNT(*) AS n " 
              "FROM Orders "
-             "GROUP BY order_hour_of_day ORDER BY n DESC").rdd
+             "GROUP BY order_hour_of_day").rdd
 
 '''
 Ritorna il giorno in cui si vende di più
 :return order_dow, numero di ordini venduti dow
 *** FAST LOADING ***
 '''
-def giornoBestSeller():
+def venditePerGiorno():
 
    return spark.sql("SELECT order_dow, COUNT(*) AS n "
               "FROM Orders "
-              "GROUP BY order_dow ORDER BY order_dow ORDER BY n DESC").rdd
+              "GROUP BY order_dow").rdd
 
 '''
 Ritorna l'utente che ha comprato di più per ogni giorno e per ogni ora
@@ -131,9 +131,9 @@ Restituisce i prodotti acquistati più comunemente
 '''
 def prodottiComuniPiuAcquistati():
 
-    spark.sql("select OrderProductsTrain.product_id, count(OrderProductsTrain.order_id) as n "
+    return spark.sql("select OrderProductsTrain.product_id, count(OrderProductsTrain.order_id) as n "
               "from OrderProductsTrain inner join OrderProductsTrain as ou on OrderProductsTrain.order_id != ou.order_id and OrderProductsTrain.product_id = ou.product_id "
-              "group by OrderProductsTrain.product_id order by n desc")
+              "group by OrderProductsTrain.product_id order by n desc").rdd
 
 '''
 Ritorna il numero di prodotti diversi di uno stesso dipartimento all'interno di uno stesso corridoio
@@ -148,10 +148,10 @@ def dipStessoCorridoioDiversiProd():
 
     dfDepartAisle.createOrReplaceTempView("DepartAisle")
 
-    spark.sql("SELECT DISTINCT Departments.department, Aisles.aisle, DepartAisle.number "
+    return spark.sql("SELECT DISTINCT Departments.department, Aisles.aisle, DepartAisle.number "
               "FROM Departments INNER JOIN DepartAisle ON Departments.department_id = DepartAisle.department_id "
               "INNER JOIN Aisles ON Aisles.aisle_id = DepartAisle.aisle_id "
-              "ORDER BY DepartAisle.number DESC")
+              "ORDER BY DepartAisle.number DESC").rdd
 
 
 '''
@@ -167,8 +167,8 @@ def prodottiAisle(aisle):
                               "WHERE Aisles.aisle = %a" % aisle)
     prodottiAisle.createOrReplaceTempView("ProdottiAisles")
 
-    spark.sql("SELECT ProdottiAisles.product_name, ProdottiAisles.aisle, Departments.department "
-              "FROM ProdottiAisles INNER JOIN Departments ON Departments.department_id = ProdottiAisles.department_id ")
+    return spark.sql("SELECT ProdottiAisles.product_name, ProdottiAisles.aisle, Departments.department "
+              "FROM ProdottiAisles INNER JOIN Departments ON Departments.department_id = ProdottiAisles.department_id ").rdd
 
 
 '''
@@ -184,8 +184,8 @@ def prodottiDepartment(department):
                               "WHERE Departments.department = %a" % department)
     prodottiDep.createOrReplaceTempView("ProdottiDep")
 
-    spark.sql("SELECT ProdottiDep.product_name, ProdottiDep.department, Aisles.aisle "
-              "FROM ProdottiDep INNER JOIN Aisles ON Aisles.aisle_id = ProdottiDep.aisle_id ")
+    return spark.sql("SELECT ProdottiDep.product_name, ProdottiDep.department, Aisles.aisle "
+              "FROM ProdottiDep INNER JOIN Aisles ON Aisles.aisle_id = ProdottiDep.aisle_id ").rdd
 
 '''
 Ritorna tutti i prodotti appartenenti ad uno specifico corridoio e dipartimento
@@ -201,9 +201,9 @@ def prodottiAisleDep(aisle, department):
               "WHERE Aisles.aisle = %a" % aisle)
     productAisels.createOrReplaceTempView("ProductAisles")
 
-    spark.sql("SELECT ProductAisles.product_name, ProductAisles.product_id, ProductAisles.aisle, Departments.department "
+    return spark.sql("SELECT ProductAisles.product_name, ProductAisles.product_id, ProductAisles.aisle, Departments.department "
               "FROM ProductAisles INNER JOIN Departments ON ProductAisles.department_id = Departments.department_id "
-              "WHERE Departments.department = %a" % department)
+              "WHERE Departments.department = %a" % department).rdd
 
 '''
 Restituisce tutti gli ordini di un utente specifico
@@ -213,10 +213,10 @@ Restituisce tutti gli ordini di un utente specifico
 '''
 def ordiniUtente(id_utente):
 
-    spark.sql("SELECT user_id, COUNT(*) AS n "
+    return spark.sql("SELECT user_id, COUNT(*) AS n "
               "FROM Orders "
               "WHERE user_id = %a "
-              "GROUP BY user_id ORDER BY n DESC" % id_utente)
+              "GROUP BY user_id ORDER BY n DESC" % id_utente).rdd
 
 '''
 Restituisce tutti gli ordini di uno specifico utente in uno specifico giorno
@@ -227,10 +227,10 @@ Restituisce tutti gli ordini di uno specifico utente in uno specifico giorno
 '''
 def ordiniUtenteGiorno(id_utente, giorno):
 
-    spark.sql("SELECT user_id, COUNT(*) AS n "
+    return spark.sql("SELECT user_id, COUNT(*) AS n "
         "FROM Orders "
         "WHERE user_id = {} AND order_dow = {} "
-        "GROUP BY user_id ORDER BY n DESC".format(id_utente, giorno))
+        "GROUP BY user_id ORDER BY n DESC".format(id_utente, giorno)).rdd
 
 
 '''
@@ -242,10 +242,10 @@ Restituisce tutti gli ordini di uno specifico utente in una specifica ora
 '''
 def ordiniUtenteOra(id_utente, ora):
 
-    spark.sql("SELECT user_id, COUNT(*) AS n "
+    return spark.sql("SELECT user_id, COUNT(*) AS n "
         "FROM Orders "
         "WHERE user_id = {} AND order_hour_of_day = {} "
-        "GROUP BY user_id ORDER BY n DESC".format(id_utente, ora))
+        "GROUP BY user_id ORDER BY n DESC".format(id_utente, ora)).rdd
 
 
 '''
@@ -261,8 +261,8 @@ def utenteUltimoOrdine(id_utente):
                        "WHERE Orders.user_id = %a" % id_utente)
     ordine.createOrReplaceTempView("Ordine")
 
-    spark.sql("SELECT Ordine.order_id, Products.product_name, Ordine.add_to_cart_order, Ordine.reordered "
-              "FROM Ordine INNER JOIN Products ON Products.product_id = Ordine.product_id")
+    return spark.sql("SELECT Ordine.order_id, Products.product_name, Ordine.add_to_cart_order, Ordine.reordered "
+              "FROM Ordine INNER JOIN Products ON Products.product_id = Ordine.product_id").rdd
 
 
 '''
@@ -273,9 +273,9 @@ Restituisce il tempo intercorso tra l'ultimo ordine di uno specifico utente e qu
 '''
 def daysSincePriorOrderUtente(id_user):
 
-    spark.sql("SELECT DISTINCT Orders.days_since_prior_order "
+    return spark.sql("SELECT DISTINCT Orders.days_since_prior_order "
               "FROM Orders INNER JOIN OrderProductsTrain ON Orders.order_id = OrderProductsTrain.order_id "
-              "WHERE Orders.user_id = %a" % id_user)
+              "WHERE Orders.user_id = %a" % id_user).rdd
 
 '''
 Ritorna il numero di volte che il prodotto specifico è stato acquistato
@@ -285,10 +285,10 @@ Ritorna il numero di volte che il prodotto specifico è stato acquistato
 '''
 def prodottoAcquistato(id_product):
 
-    spark.sql("SELECT Products.product_name, COUNT(*) AS n "
+    return spark.sql("SELECT Products.product_name, COUNT(*) AS n "
               "FROM Products INNER JOIN OrderUnified ON OrderUnified.product_id = Products.product_id "
               "WHERE Products.product_id = %a "
-              "GROUP BY Products.product_name" % id_product)
+              "GROUP BY Products.product_name" % id_product).rdd
 
 '''
 Restituisce il numero di volte che lo specifico prodotto è stato riordinato
@@ -298,10 +298,10 @@ Restituisce il numero di volte che lo specifico prodotto è stato riordinato
 '''
 def prodottoRiordinato(id_product):
 
-    spark.sql("SELECT Products.product_name, COUNT(*) "
+    return spark.sql("SELECT Products.product_name, COUNT(*) "
               "FROM Products INNER JOIN OrderUnified ON OrderUnified.product_id = Products.product_id "
               "WHERE Products.product_id = %a AND OrderUnified.reordered = 1 "
-              "GROUP BY Products.product_name" % id_product)
+              "GROUP BY Products.product_name" % id_product).rdd
 
 '''
 Analisi Data Mining, restituisce gli elementi correlati ad un altro acquistato. Nello specifico, dato un prodotto
@@ -311,7 +311,7 @@ Cerca i prodotti correlati tra di loro. Il metodo sceglie la top 5 dei prodotti 
 :return product_name, #prodotti
 *** SO SLOW LOADING ***
 '''
-def prodottiComuni(product_name):
+def prodottiCorrelati(product_name):
 
     prodottiCorrelati = spark.sql("SELECT OrderUnified.order_id, Products.product_id, Products.product_name  "
             "FROM Products INNER JOIN OrderUnified ON Products.product_id = OrderUnified.product_id "
@@ -324,8 +324,8 @@ def prodottiComuni(product_name):
               "GROUP BY OrderUnified.product_id ORDER BY n DESC LIMIT 5")
     idProdotti.createOrReplaceTempView("idProdotti")
 
-    spark.sql("SELECT Products.product_name, idProdotti.n "
-              "FROM idProdotti INNER JOIN Products ON Products.product_id = idProdotti.product_id")
+    return spark.sql("SELECT Products.product_name, idProdotti.n "
+              "FROM idProdotti INNER JOIN Products ON Products.product_id = idProdotti.product_id").rdd
 
 
 '''
@@ -342,9 +342,9 @@ def posizione(posizione):
               "GROUP BY product_id" % posizione)
     posizione.createOrReplaceTempView("Posizione")
 
-    spark.sql("SELECT Products.product_name, Posizione.n "
+    return spark.sql("SELECT Products.product_name, Posizione.n "
               "FROM Posizione INNER JOIN Products ON Products.product_id = Posizione.product_id"
-              " ORDER BY n DESC")
+              " ORDER BY n DESC").rdd
 
 
 '''
@@ -355,9 +355,9 @@ per primi nel carrello (prima posizione)
 '''
 def posizionePrioritaria():
 
-    spark.sql("SELECT DISTINCT product_id, add_to_cart_order, COUNT(product_id) AS n "
+    return spark.sql("SELECT DISTINCT product_id, add_to_cart_order, COUNT(product_id) AS n "
               "FROM OrderUnified "
-              "GROUP BY add_to_cart_order, product_id ORDER BY add_to_cart_order ASC, n DESC ")
+              "GROUP BY add_to_cart_order, product_id ORDER BY add_to_cart_order ASC, n DESC ").rdd
 
 
 '''
@@ -371,9 +371,9 @@ def aislesDepartmentsRiacquistati():
                                    "WHERE reordered = 1")
     prodottiRiordinati.createOrReplaceTempView("ProdottiRiordinati")
 
-    spark.sql("SELECT Products.aisle_id, Products.department_id, COUNT(ProdottiRiordinati.product_id) AS n "
+    return spark.sql("SELECT Products.aisle_id, Products.department_id, COUNT(ProdottiRiordinati.product_id) AS n "
                 "FROM Products INNER JOIN ProdottiRiordinati ON ProdottiRiordinati.product_id = Products.product_id "
-                "GROUP BY Products.aisle_id, Products.department_id ORDER BY n DESC LIMIT 10")
+                "GROUP BY Products.aisle_id, Products.department_id ORDER BY n DESC LIMIT 10").rdd
 
 
 '''
@@ -385,6 +385,145 @@ Dato uno specifico user e uno specifico ordine restituisce il numero di quell'or
 '''
 def numeroOrdine(user_id, order_id):
 
-    spark.sql("SELECT order_number "
+    return spark.sql("SELECT order_number "
               "FROM Orders "
-              "WHERE order_id = {} AND user_id =  {}".format(order_id, user_id))
+              "WHERE order_id = {} AND user_id =  {}".format(order_id, user_id)).rdd
+
+
+'''
+Ritorna il prodotto più acquistato e la sua variazione di vendite durante la settimana
+:return product_name, order_dow #prodottiAcquistati
+*** SLOW LOADING ***
+'''
+def prodottoPiuAcquistato():
+    mostBrought = spark.sql("SELECT product_id, COUNT(product_id) AS n "
+                              "FROM OrderUnified "
+                              "GROUP BY product_id ORDER BY n DESC LIMIT 1")
+    mostBrought.createOrReplaceTempView("MostBrought")
+
+    q1 = spark.sql("SELECT Orders.order_id, OrderUnified.product_id, Orders.order_dow "
+                   "FROM Orders INNER JOIN OrderUnified ON Orders.order_id = OrderUnified.order_id ")
+    q1.createOrReplaceTempView("q1")
+
+    spark.sql("SELECT Products.product_name, q1.order_dow, COUNT(MostBrought.product_id) AS n "
+              "FROM MostBrought INNER JOIN q1 ON MostBrought.product_id = q1.product_id "
+              "INNER JOIN Products ON MostBrought.product_id = Products.product_id "
+              "GROUP BY Products.product_name, q1.order_dow ORDER BY q1.order_dow")
+'''
+Ritorna il/i prodotto/i meno acquistato e la sua variazione di vendite durante la settimana
+:return product_name, order_dow, #vendite
+*** SLOW LOADING ***
+'''
+def prodottoMenoAcquistato():
+    lessBrought = spark.sql("SELECT product_id, COUNT(product_id) AS n "
+                              "FROM OrderUnified "
+                              "GROUP BY product_id ORDER BY n ASC LIMIT 1")
+    lessBrought.createOrReplaceTempView("lessBrought")
+
+    q1 = spark.sql("SELECT Orders.order_id, OrderUnified.product_id, Orders.order_dow "
+                   "FROM Orders INNER JOIN OrderUnified ON Orders.order_id = OrderUnified.order_id ")
+    q1.createOrReplaceTempView("q1")
+
+    spark.sql("SELECT Products.product_name, q1.order_dow, COUNT(lessBrought.product_id) AS n "
+              "FROM lessBrought INNER JOIN q1 ON lessBrought.product_id = q1.product_id "
+              "INNER JOIN Products ON lessBrought.product_id = Products.product_id "
+              "GROUP BY Products.product_name, q1.order_dow ORDER BY q1.order_dow")
+
+'''
+Ritorna il prodotto chiesto dall'utente e la variazione di acquisti durante la settimana
+:return product_name, order_dow, #vendite
+*** SLOW LOADING ***
+'''
+def prodottoSceltoDaUtente(prodotto):
+    lessBrought = spark.sql("SELECT Products.product_name, OrderUnified.product_id, COUNT(OrderUnified.product_id) AS n "
+                              "FROM OrderUnified INNER JOIN Products ON Products.product_id = OrderUnified.product_id "
+                              "GROUP BY Products.product_name, OrderUnified.product_id")
+    lessBrought.createOrReplaceTempView("lessBrought")
+
+    q2 = spark.sql("SELECT product_name, product_id, n "
+                   "FROM lessBrought WHERE product_name = %a" %prodotto)
+    q2.createOrReplaceTempView("q2")
+
+    q1 = spark.sql("SELECT Orders.order_id, OrderUnified.product_id, Orders.order_dow "
+                   "FROM Orders INNER JOIN OrderUnified ON Orders.order_id = OrderUnified.order_id ")
+    q1.createOrReplaceTempView("q1")
+
+    spark.sql("SELECT q2.product_name, q1.order_dow, COUNT(q2.product_name) AS n "
+              "FROM q2 INNER JOIN q1 ON q2.product_id = q1.product_id "
+              "GROUP BY q2.product_name, q1.order_dow "
+              "ORDER BY q1.order_dow").show()
+
+'''
+Ritorna il prodotto più venduto nel fine settimana
+:return product_name, order_dow, #vendite
+*** SLOW LOADING ***
+'''
+def prodottiFineSettimana():
+    mostBrought = spark.sql("SELECT product_id, COUNT(product_id) AS n "
+                            "FROM OrderUnified "
+                            "GROUP BY product_id ORDER BY n DESC LIMIT 1")
+    mostBrought.createOrReplaceTempView("MostBrought")
+
+    q1 = spark.sql("SELECT Orders.order_id, OrderUnified.product_id, Orders.order_dow "
+                   "FROM Orders INNER JOIN OrderUnified ON Orders.order_id = OrderUnified.order_id ")
+    q1.createOrReplaceTempView("q1")
+
+    q2 = spark.sql("SELECT order_id, product_id, order_dow "
+                   "FROM q1 WHERE order_dow = 5 OR order_dow = 6")
+    q2.createOrReplaceTempView("q2")
+
+    spark.sql("SELECT Products.product_name, q2.order_dow, COUNT(MostBrought.product_id) AS n "
+              "FROM MostBrought INNER JOIN q2 ON MostBrought.product_id = q2.product_id "
+              "INNER JOIN Products ON MostBrought.product_id = Products.product_id "
+              "GROUP BY Products.product_name, q2.order_dow ORDER BY q2.order_dow").show()
+
+def prodottiInPrior():
+    spark.sql("SELECT Products.product_name, COUNT(OrderProductsTrain.product_id) AS n "
+              "FROM OrderProductsTrain INNER JOIN PRoducts ON OrderProductsTrain.product_id = Products.product_id "
+              "GROUP BY Products.product_name ORDER BY n DESC ").show()
+
+
+'''
+Restituisce i prodotti invenduti 
+:return product_id, order_id
+*** MEDIUM LOADING ***
+'''
+def prodottiInvenduti():
+    spark.sql("SELECT product_id, order_id "
+        "FROM OrderUnified WHERE product_id NOT IN ( SELECT product_id FROM Products)").show(10000)
+
+'''
+Restituisce i 10 prodotti più acquistati da un utente
+:return product_name, #prodotti
+*** SLOW LOADING ***
+'''
+def topDieciUser(user_id):
+
+    q1 = spark.sql("SELECT user_id, order_id "
+                   "FROM Orders WHERE user_id = %a" %user_id)
+    q1.createOrReplaceTempView("q1")
+
+    spark.sql("SELECT Products.product_name, COUNT(OrderUnified.product_id) AS n "
+              "FROM q1 INNER JOIN OrderUnified ON q1.order_id = OrderUnified.order_id "
+              "INNER JOIN Products ON Products.product_id = OrderUnified.product_id "
+              "GROUP BY Products.product_name ORDER BY n DESC LIMIT 10").show()
+
+'''
+Ritorna l'ora in cui un prodotto è stato acquistato più spesso
+:return product_name, order_hour_of_day, #prodotti
+*** SLOW LOADING ***
+'''
+def prodottiAcquistatiOra(product_name):
+    q1 = spark.sql("SELECT OrderUnified.order_id, Products.product_id, Products.product_name "
+                   "FROM OrderUnified INNER JOIN Products ON OrderUnified.product_id = Products.product_id")
+    q1.createOrReplaceTempView("q1")
+
+    q2 = spark.sql("SELECT order_id, product_id, product_name "
+                   "FROM q1 WHERE product_name = %a" %product_name)
+    q2.createOrReplaceTempView("q2")
+
+    spark.sql("SELECT q2.product_name, Orders.order_hour_of_day, COUNT(q2.product_name) AS n "
+              "FROM Orders INNER JOIN q2 ON Orders.order_id = q2.order_id "
+              "GROUP BY Orders.order_hour_of_day, q2.product_name ORDER BY n DESC").show()
+
+prodottiAcquistatiOra("Grove Made Orange Juice")
