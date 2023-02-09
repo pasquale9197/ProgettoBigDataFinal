@@ -39,14 +39,14 @@ def prodottiInesistentiInOrder():
     r = spark.sql("SELECT OrderUnified.product_id "
                    "FROM OrderUnified "
                    "WHERE OrderUnified.product_id NOT IN ( SELECT Products.product_id FROM Products)").count()
-    print("Prodotti presenti in qualche ordine ma non presenti in Products")
+    print("Prodotti presenti in qualche ordine ma non presenti in Products " + str(r))
 
 def controlloChiaviAisles():
 
     spark.sql("SELECT Aisles.aisle_id, COUNT(Aisles.aisle_id) AS number "
               "FROM Aisles "
               "GROUP BY Aisles.aisle_id "
-              "ORDER BY number DESC").show(1000)
+              "ORDER BY number DESC").show(100)
 
 def senzaDuplicatiAisles():
 
@@ -65,7 +65,7 @@ def controlloChiaviDepartments():
     spark.sql("SELECT Departments.department_id, COUNT(Departments.department_id) AS number "
               "FROM Departments "
               "GROUP BY Departments.department_id "
-              "ORDER BY number DESC").show(1000)
+              "ORDER BY number DESC").show(100)
 
 def senzaDuplicatiDepartments():
 
@@ -84,7 +84,7 @@ def controlloChiaviProducts():
     spark.sql("SELECT Products.product_id, COUNT(Products.product_id) AS number "
               "FROM Products "
               "GROUP BY Products.product_id "
-              "ORDER BY number DESC").show(1000)
+              "ORDER BY number DESC").show(100)
 
 def senzaDuplicatiProducts():
 
@@ -103,7 +103,7 @@ def controlloChiaviOrders():
     spark.sql("SELECT Orders.order_id, COUNT(Orders.order_id) AS number "
               "FROM Orders "
               "GROUP BY Orders.order_id "
-              "ORDER BY number DESC").show(1000)
+              "ORDER BY number DESC").show(100)
 
 def senzaDuplicatiOrders():
 
@@ -122,7 +122,7 @@ def controlloChiaviOrderProductsPrior():
     spark.sql("SELECT OrderProductsPrior.order_id, OrderProductsPrior.product_id, OrderProductsPrior.add_to_cart_order, COUNT(*) AS number "
               "FROM OrderProductsPrior "
               "GROUP BY OrderProductsPrior.order_id, OrderProductsPrior.product_id, OrderProductsPrior.add_to_cart_order "
-              "ORDER BY number DESC").show(1000)
+              "ORDER BY number DESC").show(100)
 
 def senzaDuplicatiOrderProductsPrior():
 
@@ -141,7 +141,7 @@ def controlloChiaviOrderProductsTrain():
     spark.sql("SELECT OrderProductsTrain.order_id, OrderProductsTrain.product_id, OrderProductsTrain.add_to_cart_order, COUNT(*) AS number "
               "FROM OrderProductsTrain "
               "GROUP BY OrderProductsTrain.order_id, OrderProductsTrain.product_id, OrderProductsTrain.add_to_cart_order "
-              "ORDER BY number DESC").show(1000)
+              "ORDER BY number DESC").show(100)
 
 def senzaDuplicatiOrderProductsTrain():
 
@@ -155,9 +155,9 @@ def conDuplicatiOrderProductsTrain():
               "FROM OrderProductsTrain").count()
     print("OrderProductsTrain con duplicati " + str(r))
 
+'''
 prodottiInesistentiInOrder()
 
-'''
 senzaDuplicatiAisles()
 conDuplicatiAisles()
 senzaDuplicatiDepartments()
@@ -170,7 +170,6 @@ senzaDuplicatiOrderProductsPrior()
 conDuplicatiOrderProductsPrior()
 senzaDuplicatiOrderProductsTrain()
 conDuplicatiOrderProductsTrain()
-
 
 controlloChiaviAisles()
 controlloChiaviDepartments()

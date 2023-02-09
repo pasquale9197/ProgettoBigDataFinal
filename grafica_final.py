@@ -1,20 +1,16 @@
-import tkinter
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 import os
 import sys
-import query as metodi
+import query_final as metodi
 import tkinter.messagebox
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-import pyspark
-from pyspark.sql import SparkSession
 import matplotlib.pyplot as plt
 import numpy as np
-import threading, time
 
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
@@ -39,16 +35,12 @@ giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato",
 
 def creaValori(l1, l2, n):
 
-    print(">> Entrato in crea valori")
-
     v = []
     for i in range(n):
         v.append(0)
 
     for i in range(len(l1)):
         v[int(l1[i])] = int(l2[i])
-
-    print(">> Uscito da crea valori")
 
     return v
 
@@ -63,40 +55,41 @@ def creaColore(color, n):
 def insertItemsListbox(listbox):
 
     listbox.insert(0, "topClientiOrdini (FAST)")
-    listbox.insert(1, "ordiniPiuProdotti (FAST)")
-    listbox.insert(2, "ordiniPerOra (FAST) + Grafico")
-    listbox.insert(3, "ordiniPerGiorno (FAST) + Grafico")
-    listbox.insert(4, "dipStessoCorridoioDiversiProd (FAST) + Grafico")
-    listbox.insert(5, "prodottiAisle (FAST)")
-    listbox.insert(6, "prodottiDepartment (FAST)")
-    listbox.insert(7, "prodottiAisleDep (FAST)")
-    listbox.insert(8, "ordiniUtente (FAST)")
-    listbox.insert(9, "ordiniUtenteGiorno (FAST)")
-    listbox.insert(10, "ordiniUtenteOra (FAST)")
-    listbox.insert(11, "ultimoOrdineUtente (FAST)")
-    listbox.insert(12, "mediaDaysSincePriorOrder (FAST)")
-    listbox.insert(13, "daysSincePriorOrderUtente (FAST)")
-    listbox.insert(14, "posizionePrioritaria (FAST)")
-    listbox.insert(15, "aislesDepartmentsRiacquistati (FAST) + Grafico")
-    listbox.insert(16, "numeroOrdine (FAST)")
+    listbox.insert(1, "ordiniPerOra (FAST) + Grafico")
+    listbox.insert(2, "ordiniPerGiorno (FAST) + Grafico")
+    listbox.insert(3, "dipStessoCorridoioDiversiProd (FAST) + Grafico")
+    listbox.insert(4, "prodottiAisle (FAST)")
+    listbox.insert(5, "prodottiDepartment (FAST)")
+    listbox.insert(6, "prodottiAisleDep (FAST)")
+    listbox.insert(7, "ordiniUtente (FAST)")
+    listbox.insert(8, "ordiniUtenteGiorno (FAST)")
+    listbox.insert(9, "ordiniUtenteOra (FAST)")
+    listbox.insert(10, "ultimoOrdineUtente (FAST)")
+    listbox.insert(11, "mediaDaysSincePriorOrder (FAST)")
+    listbox.insert(12, "daysSincePriorOrderUtente (FAST)")
+    listbox.insert(13, "posizionePrioritaria (FAST)")
+    listbox.insert(14, "aislesDepartmentsRiacquistati (FAST) + Grafico")
+    listbox.insert(15, "numeroOrdine (FAST)")
+    listbox.insert(16, "ordiniPiuProdotti (MEDIUM)")
     listbox.insert(17, "prodottiComuniPiuAcquistati (MEDIUM)")
     listbox.insert(18, "topOraGiornoAcquistoUtente (MEDIUM)")
     listbox.insert(19, "topProdottiComprati (MEDIUM)")
     listbox.insert(20, "venditePerCorridoio (MEDIUM) + Grafico")
-    listbox.insert(21, "prodottoAcquistato (MEDIUM)")
-    listbox.insert(22, "prodottoRiordinato (MEDIUM)")
-    listbox.insert(23, "posizione (MEDIUM)")
-    listbox.insert(24, "top15ProdottiWeekend (MEDIUM) + Grafico")
-    listbox.insert(25, "prodottiSoloInTrain (MEDIUM)")
-    listbox.insert(26, "prodottiInvenduti (MEDIUM)")
-    listbox.insert(27, "top10ProdottiUtente (MEDIUM) + Grafico")
-    listbox.insert(28, "variazioneOrdiniTrainPrior (SLOW) + Grafico")
-    listbox.insert(29, "topProdottiRiordinati (SLOW)")
-    listbox.insert(30, "topProdottiRiordinatiPerGiorno (SLOW)")
-    listbox.insert(31, "top7ProdottiCorrelati (SLOW) + Grafico")
-    listbox.insert(32, "prodottiAcquistatiOra (SLOW) + Grafico")
-    listbox.insert(33, "confrontaVendite3Prodotti (VERY SLOW) + Grafico")
-    listbox.insert(34, "variazioneGiornalieraTopFlop (VERY SLOW) + Grafico")
+    listbox.insert(21, "venditePerDipartimento (MEDIUM)")
+    listbox.insert(22, "prodottoAcquistato (MEDIUM)")
+    listbox.insert(23, "prodottoRiordinato (MEDIUM)")
+    listbox.insert(24, "posizione (MEDIUM)")
+    listbox.insert(25, "top15ProdottiWeekend (MEDIUM) + Grafico")
+    listbox.insert(26, "prodottiSoloInTrain (MEDIUM)")
+    listbox.insert(27, "prodottiInvenduti (MEDIUM)")
+    listbox.insert(28, "top10ProdottiUtente (MEDIUM) + Grafico")
+    listbox.insert(29, "variazioneOrdiniTrainPrior (SLOW) + Grafico")
+    listbox.insert(30, "topProdottiRiordinati (SLOW)")
+    listbox.insert(31, "topProdottiRiordinatiPerGiorno (SLOW)")
+    listbox.insert(32, "top7ProdottiCorrelati (SLOW) + Grafico")
+    listbox.insert(33, "prodottiAcquistatiOra (SLOW) + Grafico")
+    listbox.insert(34, "confrontaVendite3Prodotti (VERY SLOW) + Grafico")
+    listbox.insert(35, "variazioneGiornalieraTopFlop (VERY SLOW) + Grafico")
 
 def results_topClientiOrdini(frameResults):
 
@@ -194,7 +187,9 @@ def results_venditePerCorridoio(frameResults):
     table.heading("c2", text="Quantità Prodotti Venduta")
     table.pack(expand=True, fill=BOTH)
 
-    for line in results.collect():
+    r_sorted = results.sortBy(lambda x: x[1], ascending=False)
+
+    for line in r_sorted.collect():
         table.insert('', END, values=line)
 
     y = np.array(results.map(lambda x: x[1]).collect())
@@ -214,6 +209,32 @@ def results_venditePerCorridoio(frameResults):
     canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
     print(">> Ho finito di eseguire results_venditePerCorridoio")
+
+def results_venditePerDipartimento(frameResults):
+
+    print(">> Sto eseguendo results_venditePerDipartimento")
+
+    for widget in frameResults.winfo_children():
+        widget.destroy()
+
+    results = metodi.venditePerDipartimento()
+
+    frameListResults = Frame(frameResults, background="#3c3f41")
+    frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
+    labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
+    labelListResults.pack(ipady=10)
+
+    table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
+    table.heading("c1", text="Nome Dipartimento")
+    table.heading("c2", text="Quantità Prodotti Venduta")
+    table.pack(expand=True, fill=BOTH)
+
+    r_sorted = results.sortBy(lambda x: x[1], ascending=False)
+
+    for line in r_sorted.collect():
+        table.insert('', END, values=line)
+
+    print(">> Ho finito di eseguire results_venditePerDipartimento")
 
 def results_ordiniPerOra(frameResults):
 
@@ -466,7 +487,7 @@ def results_dipStessoCorridoioDiversiProd(frameResults):
 
 def results_prodottiAisle(frameResults, aisle):
 
-    print(">> Sto eseguendo results_prodottiAisle")
+    print(">> Sto eseguendo results_prodottiAisle su " + aisle)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -477,12 +498,7 @@ def results_prodottiAisle(frameResults, aisle):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-    '''
+
     table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3"), show='headings')
     table.heading("c1", text="Nome Prodotto")
     table.heading("c2", text="Nome Corridoio")
@@ -492,11 +508,11 @@ def results_prodottiAisle(frameResults, aisle):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_prodottiAisle")
+    print(">> Ho finito di eseguire results_prodottiAisle su " + aisle)
 
 def results_prodottiDepartment(frameResults, department):
 
-    print(">> Sto eseguendo results_prodottiDepartment")
+    print(">> Sto eseguendo results_prodottiDepartment su " + department)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -507,12 +523,7 @@ def results_prodottiDepartment(frameResults, department):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3"), show='headings')
     table.heading("c1", text="Nome Prodotto")
     table.heading("c2", text="Nome Dipartimento")
@@ -522,11 +533,11 @@ def results_prodottiDepartment(frameResults, department):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_prodottiDepartment")
+    print(">> Ho finito di eseguire results_prodottiDepartment su " + department)
 
 def results_prodottiAisleDep(frameResults, aisle, department):
 
-    print(">> Sto eseguendo results_prodottiAisleDep")
+    print(">> Sto eseguendo results_prodottiAisleDep su " + aisle + " e " + department)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -537,12 +548,7 @@ def results_prodottiAisleDep(frameResults, aisle, department):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3", "c4"), show='headings')
     table.heading("c1", text="Nome Prodotto")
     table.heading("c2", text="ID Prodotto")
@@ -553,11 +559,11 @@ def results_prodottiAisleDep(frameResults, aisle, department):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_prodottiAisleDep")
+    print(">> Ho finito di eseguire results_prodottiAisleDep su " + aisle + " e " + department)
 
 def results_ordiniUtente(frameResults, user_id):
 
-    print(">> Sto eseguendo results_ordiniUtente")
+    print(">> Sto eseguendo results_ordiniUtente su " + user_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -569,40 +575,22 @@ def results_ordiniUtente(frameResults, user_id):
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
 
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-
-    table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
+    table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3", "c4", "c5"), show='headings')
     table.heading("c1", text="ID Utente")
-    table.heading("c2", text="Quantità Ordini")
+    table.heading("c2", text="ID Ordine")
+    table.heading("c3", text="Numero ordine")
+    table.heading("c4", text="Giorno")
+    table.heading("c5", text="Ora")
     table.pack(expand=True, fill=BOTH)
 
     for line in results.collect():
         table.insert('', END, values=line)
 
-    x = np.array([user_id])
-    y = np.array(results.map(lambda x: x[1]).collect())
-
-    fig = Figure(figsize=(5, 5), dpi=100)
-    a = fig.add_subplot(111)
-    a.bar(x, y)
-
-    plt.bar(x, y)
-    plt.title("Quantità ordini per l'utente " + user_id)
-    button = Button(frameGraphic, text="ZOOM GRAFICO", command=lambda: plt.show())
-    button.pack(side=BOTTOM, expand=True, fill=X, pady=3)
-
-    canvas = FigureCanvasTkAgg(fig, master=frameGraphic)
-    canvas.draw()
-    canvas.get_tk_widget().pack(fill=BOTH, expand=True)
-
-    print(">> Ho finito di eseguire results_ordiniUtente")
+    print(">> Ho finito di eseguire results_ordiniUtente su " + user_id)
 
 def results_ordiniUtenteGiorno(frameResults, user_id, giorno):
 
-    print(">> Sto eseguendo results_ordiniUtenteGiorno")
+    print(">> Sto eseguendo results_ordiniUtenteGiorno su " + user_id + " e " + giorno)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -613,25 +601,23 @@ def results_ordiniUtenteGiorno(frameResults, user_id, giorno):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
-    table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
+
+    table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3", "c4", "c5"), show='headings')
     table.heading("c1", text="ID Utente")
-    table.heading("c2", text="Quantità Ordini")
+    table.heading("c2", text="ID Ordine")
+    table.heading("c3", text="Numero ordine")
+    table.heading("c4", text="Giorno")
+    table.heading("c5", text="Ora")
     table.pack(expand=True, fill=BOTH)
 
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_ordiniUtenteGiorno")
+    print(">> Ho finito di eseguire results_ordiniUtenteGiorno su " + user_id + " e " + giorno)
 
 def results_ordiniUtenteOra(frameResults, user_id, ora):
 
-    print(">> Sto eseguendo results_ordiniUtenteOra")
+    print(">> Sto eseguendo results_ordiniUtenteOra su " + user_id + " e " + ora)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -642,25 +628,23 @@ def results_ordiniUtenteOra(frameResults, user_id, ora):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
-    table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
+
+    table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3", "c4", "c5"), show='headings')
     table.heading("c1", text="ID Utente")
-    table.heading("c2", text="Quantità Ordini")
+    table.heading("c2", text="ID Ordine")
+    table.heading("c3", text="Numero ordine")
+    table.heading("c4", text="Giorno")
+    table.heading("c5", text="Ora")
     table.pack(expand=True, fill=BOTH)
 
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_ordiniUtenteOra")
+    print(">> Ho finito di eseguire results_ordiniUtenteOra su " + user_id + " e " + ora)
 
 def results_ultimoOrdineUtente(frameResults, user_id):
 
-    print(">> Sto eseguendo results_ultimoOrdineUtente")
+    print(">> Sto eseguendo results_ultimoOrdineUtente su " + user_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -671,27 +655,25 @@ def results_ultimoOrdineUtente(frameResults, user_id):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
-    table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3", "c4"), show='headings')
+
+    table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings')
     table.heading("c1", text="ID Ordine")
-    table.heading("c2", text="Nome Prodotto")
-    table.heading("c3", text="Posizione nell'ordine")
-    table.heading("c4", text="Riordinato")
+    table.heading("c2", text="Numero Ordine")
+    table.heading("c3", text="Giorno")
+    table.heading("c4", text="Ora")
+    table.heading("c5", text="Nome Prodotto")
+    table.heading("c6", text="Posizione nell'ordine")
+    table.heading("c7", text="Riordinato")
     table.pack(expand=True, fill=BOTH)
 
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_ultimoOrdineUtente")
+    print(">> Ho finito di eseguire results_ultimoOrdineUtente su " + user_id)
 
 def results_daysSincePriorOrderUtente(frameResults, user_id):
 
-    print(">> Sto eseguendo results_daysSincePriorOrderUtente")
+    print(">> Sto eseguendo results_daysSincePriorOrderUtente su " + user_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -702,12 +684,7 @@ def results_daysSincePriorOrderUtente(frameResults, user_id):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1"), show='headings')
     table.heading("c1", text="Giorni dall'ultimo ordine")
     table.pack(expand=True, fill=BOTH)
@@ -715,11 +692,11 @@ def results_daysSincePriorOrderUtente(frameResults, user_id):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_daysSincePriorOrderUtente")
+    print(">> Ho finito di eseguire results_daysSincePriorOrderUtente su " + user_id)
 
 def results_prodottoAcquistato(frameResults, product_id):
 
-    print(">> Sto eseguendo results_prodottoAcquistato")
+    print(">> Sto eseguendo results_prodottoAcquistato su " + product_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -730,12 +707,7 @@ def results_prodottoAcquistato(frameResults, product_id):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
     table.heading("c1", text="Nome Prodotto")
     table.heading("c2", text="Quantità Venduta")
@@ -744,11 +716,11 @@ def results_prodottoAcquistato(frameResults, product_id):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_prodottoAcquistato")
+    print(">> Ho finito di eseguire results_prodottoAcquistato su " + product_id)
 
 def results_prodottoRiordinato(frameResults, product_id):
 
-    print(">> Sto eseguendo results_prodottoRiordinato")
+    print(">> Sto eseguendo results_prodottoRiordinato su " + product_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -759,12 +731,7 @@ def results_prodottoRiordinato(frameResults, product_id):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
     table.heading("c1", text="Nome Prodotto")
     table.heading("c2", text="Quantità Riordinata")
@@ -773,11 +740,11 @@ def results_prodottoRiordinato(frameResults, product_id):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_prodottoRiordinato")
+    print(">> Ho finito di eseguire results_prodottoRiordinato su " + product_id)
 
 def results_top7ProdottiCorrelati(frameResults, product_name):
 
-    print(">> Sto eseguendo results_top7ProdottiCorrelati")
+    print(">> Sto eseguendo results_top7ProdottiCorrelati su " + product_name)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -818,11 +785,11 @@ def results_top7ProdottiCorrelati(frameResults, product_name):
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
-    print(">> Ho finito di eseguire results_top7ProdottiCorrelati")
+    print(">> Ho finito di eseguire results_top7ProdottiCorrelati su " + product_name)
 
 def results_posizione(frameResults, posizione):
 
-    print(">> Sto eseguendo results_posizione")
+    print(">> Sto eseguendo results_posizione su " + posizione)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -833,12 +800,7 @@ def results_posizione(frameResults, posizione):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
     table.heading("c1", text="Nome Prodotto")
     table.heading("c2", text="Num. Ordini In Posizione")
@@ -847,7 +809,7 @@ def results_posizione(frameResults, posizione):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_posizione")
+    print(">> Ho finito di eseguire results_posizione su " + posizione)
 
 def results_posizionePrioritaria(frameResults):
 
@@ -862,15 +824,11 @@ def results_posizionePrioritaria(frameResults):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
-    table = ttk.Treeview(frameListResults, column=("c1", "c2"), show='headings')
+
+    table = ttk.Treeview(frameListResults, column=("c1", "c2", "c3"), show='headings')
     table.heading("c1", text="ID Prodotto")
-    table.heading("c2", text="Posizione nell'ordine")
+    table.heading("c2", text="Nome Prodotto")
+    table.heading("c3", text="Num. volte in prima posizione")
     table.pack(expand=True, fill=BOTH)
 
     for line in results.collect():
@@ -927,7 +885,7 @@ def results_aislesDepartmentsRiacquistati(frameResults):
 
 def results_numeroOrdine(frameResults, user_id, order_id):
 
-    print(">> Sto eseguendo results_numeroOrdine")
+    print(">> Sto eseguendo results_numeroOrdine su " + user_id + " e " + order_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -938,12 +896,7 @@ def results_numeroOrdine(frameResults, user_id, order_id):
     frameListResults.pack(side=LEFT, expand=True, fill=BOTH, padx=5, pady=2)
     labelListResults = Label(frameListResults, text="ELENCO DEI RISULTATI", background="#3c3f41", foreground="white")
     labelListResults.pack(ipady=10)
-    '''
-    frameGraphic = Frame(frameResults, background="#3c3f41")
-    frameGraphic.pack(side=RIGHT, expand=True, fill=BOTH, padx=5, pady=2)
-    labelGrafico = Label(frameGraphic, text="GRAFICO DEI RISULTATI", background="#3c3f41", foreground="white")
-    labelGrafico.pack(ipady=10)
-'''
+
     table = ttk.Treeview(frameListResults, column=("c1"), show='headings')
     table.heading("c1", text="Numero Ordine")
     table.pack(expand=True, fill=BOTH)
@@ -951,11 +904,11 @@ def results_numeroOrdine(frameResults, user_id, order_id):
     for line in results.collect():
         table.insert('', END, values=line)
 
-    print(">> Ho finito di eseguire results_numeroOrdine")
+    print(">> Ho finito di eseguire results_numeroOrdine su " + user_id + " e " + order_id)
 
 def results_confrontaVendite3Prodotti(frameResults, product_name1, product_name2, product_name3):
 
-    print(">> Sto eseguendo results_confrontaVendite3Prodotti")
+    print(">> Sto eseguendo results_confrontaVendite3Prodotti su " + product_name1 + ", " + product_name2 + ", " + product_name3)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -1017,8 +970,7 @@ def results_confrontaVendite3Prodotti(frameResults, product_name1, product_name2
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
-    print(">> Ho finito di eseguire results_confrontaVendite3Prodotti")
-
+    print(">> Ho finito di eseguire results_confrontaVendite3Prodotti su " + product_name1 + ", " + product_name2 + ", " + product_name3)
 
 def results_variazioneGiornalieraTopFlop(frameResults):
 
@@ -1237,7 +1189,7 @@ def results_variazioneOrdiniTrainPrior(frameResults):
 
 def results_top10ProdottiUtente(frameResults, user_id):
 
-    print(">> Sto eseguendo results_top10ProdottiUtente")
+    print(">> Sto eseguendo results_top10ProdottiUtente su " + user_id)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -1280,11 +1232,11 @@ def results_top10ProdottiUtente(frameResults, user_id):
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
-    print(">> Ho finito di eseguire results_top10ProdottiUtente")
+    print(">> Ho finito di eseguire results_top10ProdottiUtente su " + user_id)
 
 def results_prodottiAcquistatiOra(frameResults, product_name):
 
-    print(">> Sto eseguendo results_prodottiAcquistatiOra")
+    print(">> Sto eseguendo results_prodottiAcquistatiOra " + product_name)
 
     for widget in frameResults.winfo_children():
         widget.destroy()
@@ -1332,7 +1284,7 @@ def results_prodottiAcquistatiOra(frameResults, product_name):
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
-    print(">> Ho finito di eseguire results_prodottiAcquistatiOra")
+    print(">> Ho finito di eseguire results_prodottiAcquistatiOra " + product_name)
 
 def results_mediaDaysSincePriorOrder(frameResults):
 
@@ -1392,7 +1344,7 @@ def createFormBox(frame, querySelected, frameResults):
             button = Button(frameFormQueryButton, text="ESEGUI RICERCA", command=lambda: results_topProdottiComprati(frameResults))
             button.pack(side=RIGHT, expand=True, fill=X)
 
-        case "ordiniPiuProdotti (FAST)":
+        case "ordiniPiuProdotti (MEDIUM)":
 
             print(">> Hai selezionato ordiniPiuProdotti dalla lista")
             frameFormQueryDesc = Frame(frame, background="#3b4754")
@@ -1418,6 +1370,23 @@ def createFormBox(frame, querySelected, frameResults):
             frameFormQueryButton = Frame(frame)
             frameFormQueryButton.pack(expand=True, fill=X, padx=10, pady=5)
             button = Button(frameFormQueryButton, text="ESEGUI RICERCA", command=lambda: results_venditePerCorridoio(frameResults))
+            button.pack(side=RIGHT, expand=True, fill=X)
+
+        case "venditePerDipartimento (MEDIUM)":
+
+            print(">> Hai selezionato venditePerDipartimento dalla lista")
+            frameFormQueryDesc = Frame(frame, background="#3b4754")
+            frameFormQueryDesc.pack(expand=True, fill=X, padx=10, pady=10)
+            labelQueryDesc = Label(frameFormQueryDesc,
+                                   text="venditePerDipartimento:\n\n Restituisce la quantità di prodotti venduta per ogni dipartimento.\n "
+                                        "Non è necessario inserire nessun parametro per l'analisi.",
+                                   background="#ecbb06")
+            labelQueryDesc.pack(ipady=30, ipadx=30, fill=X, pady=5)
+
+            frameFormQueryButton = Frame(frame)
+            frameFormQueryButton.pack(expand=True, fill=X, padx=10, pady=5)
+            button = Button(frameFormQueryButton, text="ESEGUI RICERCA",
+                            command=lambda: results_venditePerDipartimento(frameResults))
             button.pack(side=RIGHT, expand=True, fill=X)
 
         case "ordiniPerOra (FAST) + Grafico":
@@ -1811,7 +1780,7 @@ def createFormBox(frame, querySelected, frameResults):
             print(">> Hai selezionato posizionePrioritaria dalla lista")
             frameFormQueryDesc = Frame(frame, background="#3b4754")
             frameFormQueryDesc.pack(expand=True, fill=X, padx=10, pady=10)
-            labelQueryDesc = Label(frameFormQueryDesc, text="posizionePrioritaria:\n\n Restituisce quali sono gli alimenti con più priorità acquistati, ovvero quelli che sono stati aggiunti per primi nel carrello (prima posizione).\n "
+            labelQueryDesc = Label(frameFormQueryDesc, text="posizionePrioritaria:\n\n Restituisce quali sono gli alimenti con più priorità acquistati, ovvero quelli che \nsono stati aggiunti per primi nel carrello (prima posizione).\n "
                                                             "Non è necessario inserire nessun parametro per l'analisi.", background="#ecbb06")
             labelQueryDesc.pack(ipady=30, ipadx=30, fill=X, pady=5)
 
@@ -1875,7 +1844,7 @@ def createFormBox(frame, querySelected, frameResults):
 
             frameFormQuery1 = Frame(frame, background="#313335")
             frameFormQuery1.pack(expand=True, fill=X, padx=10, pady=5)
-            label1 = Label(frameFormQuery1, text="PRODOTTO 1", background="#313335", foreground="white")
+            label1 = Label(frameFormQuery1, text="NOME PRODOTTO 1", background="#313335", foreground="white")
             label1.pack(side=LEFT, expand=True)
             text1 = tk.StringVar()
             entry1 = Entry(frameFormQuery1, textvariable=text1)
@@ -1883,7 +1852,7 @@ def createFormBox(frame, querySelected, frameResults):
 
             frameFormQuery2 = Frame(frame, background="#313335")
             frameFormQuery2.pack(expand=True, fill=X, padx=10, pady=5)
-            label2 = Label(frameFormQuery2, text="PRODOTTO 2", background="#313335", foreground="white")
+            label2 = Label(frameFormQuery2, text="NOME PRODOTTO 2", background="#313335", foreground="white")
             label2.pack(side=LEFT, expand=True)
             text2 = tk.StringVar()
             entry2 = Entry(frameFormQuery2, textvariable=text2)
@@ -1891,7 +1860,7 @@ def createFormBox(frame, querySelected, frameResults):
 
             frameFormQuery3 = Frame(frame, background="#313335")
             frameFormQuery3.pack(expand=True, fill=X, padx=10, pady=5)
-            label3 = Label(frameFormQuery3, text="PRODOTTO 3", background="#313335", foreground="white")
+            label3 = Label(frameFormQuery3, text="NOME PRODOTTO 3", background="#313335", foreground="white")
             label3.pack(side=LEFT, expand=True)
             text3 = tk.StringVar()
             entry3 = Entry(frameFormQuery3, textvariable=text3)
@@ -1922,7 +1891,7 @@ def createFormBox(frame, querySelected, frameResults):
             frameFormQueryDesc = Frame(frame, background="#3b4754")
             frameFormQueryDesc.pack(expand=True, fill=X, padx=10, pady=10)
             labelQueryDesc = Label(frameFormQueryDesc,
-                                   text="top15ProdottiWeekend:\n\n L'analisi restituisce i 15 prodotti più vednuti nel fine settimana. Ad esempio \nquesto potrebbe far intuire che le abitudini di acquisto differiscono rispetto"
+                                   text="top15ProdottiWeekend:\n\n L'analisi restituisce i 15 prodotti più venduti nel fine settimana. Ad esempio \nquesto potrebbe far intuire che le abitudini di acquisto differiscono rispetto"
                                         "\n ai giorni lavorativi in quanto i clienti hanno più tempo per cucinare."
                                         "\nNon è necessario inserire nessun parametro per l'analisi.",
                                    background="#ecbb06")
@@ -1972,7 +1941,7 @@ def createFormBox(frame, querySelected, frameResults):
 
             frameFormQueryDesc = Frame(frame, background="#3b4754")
             frameFormQueryDesc.pack(expand=True, fill=X, padx=10, pady=10)
-            labelQueryDesc = Label(frameFormQueryDesc, text="variazioneOrdiniTrainPrior:\n\n L'analisi restituisce la variazione delle vendite giornaliere dei prodotti presenti in prior \ne viene confrontata con quella dei prodotti presenti in train"
+            labelQueryDesc = Label(frameFormQueryDesc, text="variazioneOrdiniTrainPrior:\n\n L'analisi restituisce la variazione delle vendite giornaliere dei prodotti presenti in prior \ne viene confrontata con quella dei prodotti presenti in train."
                                         "\nNon è necessario inserire nessun parametro per l'analisi.", background="#ecbb06")
             labelQueryDesc.pack(ipady=30, ipadx=30, fill=X, pady=5)
 
@@ -2046,7 +2015,7 @@ def createFormBox(frame, querySelected, frameResults):
                             command=lambda: results_mediaDaysSincePriorOrder(frameResults))
             button.pack(side=RIGHT, expand=True, fill=X)
 
-def createSearchBox():
+def start():
 
     frameSearch = Frame(root, border=10, background="#3b4754")
     frameSearch.pack(side=TOP, fill=X, padx=50, pady=10)
@@ -2073,11 +2042,5 @@ def createSearchBox():
     #querySelected = listBoxQuery.get(ANCHOR)
     listBoxQuery.bind('<<ListboxSelect>>', lambda x: createFormBox(frameFormQuery, listBoxQuery.get(ANCHOR), frameResults))
 
-createSearchBox()
+start()
 root.mainloop()
-
-'''
-l1 = [1, 0]
-l2 = [2, 3]
-print(creaValori(l1, l2, 7))
-'''
